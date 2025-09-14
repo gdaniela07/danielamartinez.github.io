@@ -3,89 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title > Perfil Personal </title>
+    <title>Webcam y Reconocimiento de Voz</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fce4ec;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            padding: 2rem;
+            background: #ffc9db;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            color: #c43766;
+        }
+        p {
+            color: #c43766;
+        }
+
+        video, canvas {
+            border-radius: 16px;
+            border: 4px solid #c43766;
+            width: 100%;
+            max-width: 700px;
+            margin-top: 1rem;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        button {
+            margin-top: 1rem;
+            padding: 0.8rem 2rem;
+            border-radius: 9999px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            background: #ed5286;
+            color: white;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: #c43766;
+        }
+    </style>
 </head>
 <body>
-    <h1 align="center"><font color="rosybrown">⋆౨ৎ⟡˖ Mi ࣪Perfil Personal ⊹˙♡﹗</font> </h1>
-    <table width="100%">
-        <tr align="center">
-            <td>
-                <img src="img/foto.jpeg" align="center" width="auto" height="300px">          
-            </td>
-        </tr>
-    </table>
+    <div class="container">
+        <h1>Captura una foto con tu voz ! </h1>
+        <p>Di "foto" para capturar la imagen.</p>
 
+        <video id="video" autoplay playsinline></video>
+        <canvas id="canvas" class="hidden"></canvas>
+        <p id="status"></p>
+        <button id="download" class="hidden">Descargar Foto</button>
+    </div>
 
-&nbsp    
-<table border="1" width="80%" cellspacing="0" align="center" cellpadding="4">
-    <tr bgcolor="lightpink">
-        <th colspan="2" align="center"><font size="4">Informacion Personal</font> </th>
+    <script>
+        const video = document.getElementById("video");
+        const canvas = document.getElementById("canvas");
+        const status = document.getElementById("status");
+        const download = document.getElementById("download");
+        const ctx = canvas.getContext("2d");
 
-    </tr>
-    <tr bgcolor="oldlace">
-        <td>Nombre: </td>
-        <td>Genesis Daniela Martinez Maldonado</td>
-    </tr>
-    <tr bgcolor="oldlace">
-        <td>Edad:</td>
-        <td>17 años</td>
-    </tr>
-    <tr bgcolor="oldlace">
-        <td>Domicilio:</td>
-        <td>Barrio Torondon, Comayagua</td>
-    </tr>
-    <tr bgcolor="oldlace">
-        <td>Profesion:</td>
-        <td>Estudiante</td>
-    </tr>
+        navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+            video.srcObject = stream;
+            status.textContent = "Webcam activada. Di 'foto'...";
+        }).catch(() => {
+            status.textContent = "No se pudo acceder a la cámara.";
+        });
 
-</table>
+        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SR) {
+            const recog = new SR();
+            recog.lang = "es-ES";
+            recog.continuous = true;
+            recog.onresult = e => {
+                const palabra = e.results[e.results.length - 1][0].transcript.trim().toLowerCase();
+                if (palabra === "foto") tomarFoto();
+            };
+            recog.start();
+        } else {
+            status.textContent = "Tu navegador no soporta reconocimiento de voz.";
+        }
 
-&nbsp;
+        function tomarFoto() {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            video.classList.add("hidden");
+            canvas.classList.remove("hidden");
+            status.textContent = "¡Foto capturada!";
+            download.classList.remove("hidden");
+        }
 
-<table border="1" width="80%" cellspacing="0" align="center" cellpadding="4">
-    <tr align="center" >
-        <th colspan="2" bgcolor="lightblue"><font size="4">Talentos e Intereses</font></th>
-    </tr>
-    <tr align="center" bgcolor="aliceblue"><font size="3">
-        <th>Talentos</th>
-        <th>Intereres</th>
-    </font>
-    </tr>
-    <tr align="center" bgcolor="ghostwhite">
-        <td>Dibujar</td>
-        <td> Musica</td>
-    </tr>
-    <tr align="center" bgcolor="ghostwhite">
-        <td> Cantar</td>
-        <td> Viajes</td>
-    </tr>
-    <tr align="center" bgcolor="ghostwhite">
-        <td>Bailar</td>
-        <td>Diseño</td>
-    </tr>
-    <tr align="center" bgcolor="ghostwhite">
-        <td>Matematicas</td>
-        <td>Idiomas</td>
-    </tr>
-    <tr align="center" bgcolor="ghostwhite">
-        <td>Escritura</td>
-        <td>Fotografia</td>
-    </tr>
-</table> 
-
-&nbsp;
-
-<table  width="80%" cellspacing="0" cellpadding="5"align="center">
-    <tr>
-        <th align="center"><font size="4"> Mis redes sociales !! ✩ </font></th>
-    </tr>
-    <tr align="center" bgcolor="lightgray">
-        <td><a href="https://www.instagram.com/">Instagram</a> |
-        <a href="https://www.tiktok.com/">Tiktok</a> |
-        <a href="https://www.facebook.com/">Facebook</a> </td>
-    </tr>
-</table>
-    
+        download.onclick = () => {
+            const a = document.createElement("a");
+            a.href = canvas.toDataURL("image/png");
+            a.download = "mi-foto.png";
+            a.click();
+        };
+    </script>
 </body>
 </html>
+
